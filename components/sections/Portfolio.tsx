@@ -4,7 +4,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, Play } from "lucide-react";
 import Image from "next/image";
-import SectionWrapper from "@/components/ui/SectionWrapper";
 import VideoModal from "@/components/ui/VideoModal";
 import { portfolioItems, PortfolioCategory, PortfolioItem } from "@/lib/data";
 
@@ -28,7 +27,7 @@ function PortfolioCard({
       transition={{ duration: 0.3 }}
       whileHover={{ y: -6 }}
       onClick={() => hasVideo && onPlay(item)}
-      className={`glass-card-hover overflow-hidden group ${hasVideo ? "cursor-pointer" : "cursor-default"}`}
+      className={`bg-[#111] border border-[#1e1e1e] rounded-2xl overflow-hidden group hover:border-[#74C044]/30 transition-colors ${hasVideo ? "cursor-pointer" : "cursor-default"}`}
     >
       {/* Thumbnail */}
       <div className="aspect-video relative overflow-hidden">
@@ -59,7 +58,7 @@ function PortfolioCard({
         )}
 
         {/* Category badge */}
-        <span className="absolute top-3 left-3 px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-sm text-xs text-white border border-white/20">
+        <span className="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-black/70 text-[10px] text-white font-black uppercase tracking-wider">
           {item.category}
         </span>
       </div>
@@ -67,7 +66,7 @@ function PortfolioCard({
       {/* Info */}
       <div className="p-4 flex flex-col gap-1">
         <h3 className="font-semibold text-white text-sm leading-snug">{item.title}</h3>
-        <p className="text-slate-500 text-xs">{item.description}</p>
+        <p className="text-[#555] text-xs">{item.description}</p>
 
         {hasVideo ? (
           <button
@@ -98,43 +97,34 @@ export default function Portfolio() {
     active === "All" ? portfolioItems : portfolioItems.filter((p) => p.category === active);
 
   return (
-    <section id="portfolio" className="relative py-24 px-6">
+    <section id="portfolio" className="relative py-24 px-6 bg-[#0a0a0a]">
       <div className="max-w-7xl mx-auto">
-        <SectionWrapper>
-          <h2 className="section-heading">
-            My <span className="gradient-text">Work</span>
+        <div className="text-center mb-12">
+          <p className="text-[11px] tracking-[0.35em] uppercase font-bold text-[#74C044] mb-4">Portfolio</p>
+          <h2 className="text-4xl md:text-5xl font-black text-white uppercase">
+            My <span className="text-[#74C044]">Work</span>
           </h2>
-          <p className="section-subtext">
+          <p className="text-[#777] text-base mt-4 max-w-lg mx-auto">
             A selection of projects across formats and industries.
           </p>
-        </SectionWrapper>
+        </div>
 
         {/* Filter tabs */}
-        <SectionWrapper delay={0.1}>
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActive(cat)}
-                className={`relative px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                  active === cat
-                    ? "text-white"
-                    : "text-slate-400 hover:text-white glass-card hover:bg-white/10"
-                }`}
-              >
-                {active === cat && (
-                  <motion.span
-                    layoutId="filter-pill"
-                    className="absolute inset-0 rounded-full bg-gradient-to-r from-[#4A8A24] to-[#74C044]"
-                    style={{ zIndex: -1 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-                {cat}
-              </button>
-            ))}
-          </div>
-        </SectionWrapper>
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActive(cat)}
+              className={`relative px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all duration-200 ${
+                active === cat
+                  ? "bg-[#74C044] text-[#0a0a0a]"
+                  : "bg-[#111] border border-[#1e1e1e] text-[#888] hover:text-white hover:border-[#74C044]/30"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
 
         {/* Grid */}
         <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">

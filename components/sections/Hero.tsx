@@ -1,101 +1,119 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
-import { Play } from "lucide-react";
+import { motion } from "framer-motion";
+import { TrendingUp, Zap, Users } from "lucide-react";
 
-const container: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.12 } },
-};
-const item: Variants = {
-  hidden: { opacity: 0, y: 40 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] } },
-};
+const statCards = [
+  { icon: TrendingUp, value: "500M+", label: "Total Views Generated" },
+  { icon: Zap,         value: "1000+", label: "Videos Created" },
+  { icon: Users,       value: "50+",   label: "Clients Served" },
+];
+
+const avatarInitials = ["S", "M", "P", "J"];
 
 export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-28 pb-16 overflow-hidden"
+      className="relative min-h-screen flex items-center px-6 pt-32 pb-16 overflow-hidden bg-[#0a0a0a]"
     >
-      {/* Big green radial glow behind headline */}
+      {/* Subtle grid pattern */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none opacity-[0.025]"
         style={{
-          background:
-            "radial-gradient(ellipse 70% 55% at 50% 40%, rgba(116,192,68,0.08) 0%, transparent 65%)",
+          backgroundImage:
+            "linear-gradient(#74C044 1px, transparent 1px), linear-gradient(90deg, #74C044 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
         }}
       />
 
-      <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="max-w-5xl mx-auto text-center flex flex-col items-center gap-8 relative z-10"
-      >
-        {/* Pill badge */}
-        <motion.div variants={item}>
-          <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-[#74C044]/30 bg-[#74C044]/8 text-sm text-[#A0D870] font-medium tracking-wide">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#74C044] animate-pulse" />
-            Trusted by 50+ Brands &amp; Creators
-          </span>
-        </motion.div>
+      {/* Corner bracket accents */}
+      <div className="absolute top-32 left-8 w-10 h-10 border-l-2 border-t-2 border-[#74C044]/20 hidden xl:block" />
+      <div className="absolute top-32 right-8 w-10 h-10 border-r-2 border-t-2 border-[#74C044]/20 hidden xl:block" />
+      <div className="absolute bottom-16 left-8 w-10 h-10 border-l-2 border-b-2 border-[#74C044]/20 hidden xl:block" />
+      <div className="absolute bottom-16 right-8 w-10 h-10 border-r-2 border-b-2 border-[#74C044]/20 hidden xl:block" />
 
-        {/* Headline — large, confident */}
-        <motion.h1
-          variants={item}
-          className="text-6xl sm:text-7xl md:text-8xl font-black leading-[1.0] tracking-tight"
-        >
-          <span className="text-white">We Turn </span>
-          <em className="not-italic gradient-text">Scrollers</em>
-          <br />
-          <span className="text-white">Into </span>
-          <em className="not-italic gradient-text">Buyers.</em>
-        </motion.h1>
+      <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
-        {/* Sub — one punchy line */}
-        <motion.p
-          variants={item}
-          className="text-lg md:text-xl text-slate-400 max-w-xl leading-relaxed"
-        >
-          Our clients average{" "}
-          <span className="text-white font-semibold">3M+ views</span> and a{" "}
-          <span className="text-white font-semibold">40% watch-time lift</span>{" "}
-          within the first 30 days.
-        </motion.p>
-
-        {/* CTAs */}
-        <motion.div variants={item} className="flex flex-wrap gap-4 justify-center pt-2">
-          <a
-            href="#contact"
-            className="px-8 py-3.5 rounded-full bg-[#74C044] text-[#040B04] font-bold text-sm tracking-wide hover:bg-[#A0D870] transition-colors shadow-lg shadow-[#74C044]/25"
-          >
-            Book a Strategy Call
-          </a>
-          <a
-            href="#portfolio"
-            className="px-8 py-3.5 rounded-full border border-white/20 text-white font-semibold text-sm tracking-wide hover:border-white/40 hover:bg-white/5 transition-all flex items-center gap-2"
-          >
-            <Play className="w-4 h-4 fill-current" />
-            View Portfolio
-          </a>
-        </motion.div>
-      </motion.div>
-
-      {/* Scroll nudge */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5"
-      >
-        <span className="text-[10px] tracking-[0.3em] uppercase text-slate-600">Scroll</span>
+        {/* ── Left: copy ── */}
         <motion.div
-          animate={{ y: [0, 5, 0] }}
-          transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
-          className="w-px h-8 bg-gradient-to-b from-[#74C044]/60 to-transparent"
-        />
-      </motion.div>
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
+          className="flex flex-col gap-7"
+        >
+          <p className="text-[11px] tracking-[0.35em] uppercase font-bold text-[#74C044]">
+            For Brands &amp; Creators
+          </p>
+
+          <h1 className="text-5xl sm:text-6xl xl:text-7xl font-black leading-[1.0] tracking-tight uppercase">
+            <span className="text-white">Attract More </span>
+            <span className="text-[#74C044]">Premium</span>
+            <br />
+            <span className="text-white">Clients With </span>
+            <span className="text-[#74C044]">Content</span>
+            <br />
+            <span className="text-white">That Converts</span>
+          </h1>
+
+          <p className="text-[#777] text-base italic">
+            (Done-For-You Video Editing That Actually Works)
+          </p>
+
+          <p className="text-[#999] text-base leading-relaxed max-w-lg">
+            We craft scroll-stopping video content for brands and creators. From reels to VSLs,
+            we help you grow views, watch time, and revenue — completely done for you.
+          </p>
+
+          <div className="flex flex-wrap gap-4 pt-1">
+            <a
+              href="#contact"
+              className="px-8 py-4 rounded-lg bg-[#74C044] text-[#0a0a0a] font-black text-sm tracking-widest uppercase hover:bg-[#A0D870] transition-colors shadow-lg shadow-[#74C044]/20"
+            >
+              Book a Call With Us
+            </a>
+          </div>
+
+          {/* Social proof strip */}
+          <div className="flex items-center gap-4 pt-1">
+            <div className="flex -space-x-2">
+              {avatarInitials.map((l) => (
+                <div
+                  key={l}
+                  className="w-9 h-9 rounded-full bg-[#111] border-2 border-[#74C044] flex items-center justify-center text-[11px] font-black text-[#74C044]"
+                >
+                  {l}
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[#74C044] font-black text-sm">500M+</span>
+              <span className="text-[#777] text-sm">Views Generated</span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ── Right: stat cards ── */}
+        <div className="flex flex-col gap-4">
+          {statCards.map(({ icon: Icon, value, label }, i) => (
+            <motion.div
+              key={label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 + i * 0.12, duration: 0.6 }}
+              className="bg-[#111] border border-[#1e1e1e] rounded-2xl p-6 flex items-center gap-5 hover:border-[#74C044]/30 transition-colors"
+            >
+              <div className="w-12 h-12 rounded-xl bg-[#74C044]/10 border border-[#74C044]/20 flex items-center justify-center shrink-0">
+                <Icon className="w-6 h-6 text-[#74C044]" />
+              </div>
+              <div>
+                <div className="text-3xl font-black text-white">{value}</div>
+                <div className="text-[#777] text-sm mt-0.5">{label}</div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

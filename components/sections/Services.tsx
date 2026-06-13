@@ -1,72 +1,83 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  PlayCircle,
-  Smartphone,
-  Palette,
-  Layers,
-  Mic2,
-  Film,
-} from "lucide-react";
-import SectionWrapper from "@/components/ui/SectionWrapper";
-import { services } from "@/lib/data";
 
-const iconMap: Record<string, React.ElementType> = {
-  Youtube: PlayCircle,
-  Smartphone,
-  Palette,
-  Layers,
-  Mic2,
-  Film,
-};
+const steps = [
+  {
+    num: "01",
+    title: "Brand Deep Dive",
+    desc: "We get to know your brand, audience, and goals to guide every piece of content we create for you.",
+  },
+  {
+    num: "02",
+    title: "Content Strategy",
+    desc: "We map out your content calendar, target hooks, and posting cadence for maximum growth.",
+  },
+  {
+    num: "03",
+    title: "Raw Footage Review",
+    desc: "You send us your footage. We review and build the edit structure that hooks viewers from frame one.",
+  },
+  {
+    num: "04",
+    title: "Edit & Post",
+    desc: "We handle all editing, color grading, captions, motion graphics, and delivery-ready formats.",
+  },
+  {
+    num: "05",
+    title: "Track & Grow",
+    desc: "We monitor performance analytics, refine the strategy, and help you grow faster every month.",
+  },
+  {
+    num: "06",
+    title: "Scale DFY",
+    desc: "We manage your full content pipeline — completely done for you, so you focus on your business.",
+  },
+];
 
 export default function Services() {
   return (
-    <section id="services" className="relative py-24 px-6">
-      <div className="max-w-7xl mx-auto">
-        <SectionWrapper>
-          <h2 className="section-heading">
-            What I <span className="gradient-text">Offer</span>
-          </h2>
-          <p className="section-subtext">
-            End-to-end video editing services tailored to grow your brand and
-            captivate your audience.
+    <section id="services" className="relative py-24 px-6 bg-[#0d0d0d] border-y border-[#1e1e1e]">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-14">
+          <p className="text-[11px] tracking-[0.35em] uppercase font-bold text-[#74C044] mb-4">
+            How It Works
           </p>
-        </SectionWrapper>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service, i) => {
-            const Icon = iconMap[service.icon];
-            return (
-              <SectionWrapper key={service.title} delay={i * 0.08}>
-                <motion.div
-                  whileHover={{ y: -6, scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="glass-card-hover p-6 h-full flex flex-col gap-4 group cursor-default"
-                >
-                  {/* Icon */}
-                  <div
-                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${service.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-
-                  {/* Text */}
-                  <h3 className="font-bold text-lg text-white">{service.title}</h3>
-                  <p className="text-slate-400 text-sm leading-relaxed flex-1">
-                    {service.description}
-                  </p>
-
-                  {/* Hover gradient line */}
-                  <div
-                    className={`h-0.5 w-0 group-hover:w-full bg-gradient-to-r ${service.gradient} rounded-full transition-all duration-500`}
-                  />
-                </motion.div>
-              </SectionWrapper>
-            );
-          })}
+          <h2 className="text-4xl md:text-5xl font-black text-white uppercase leading-tight">
+            Our Seamless Content
+            <br />
+            <span className="text-[#74C044]">Creation Process</span>
+          </h2>
+          <p className="text-[#777] text-base mt-5 max-w-xl mx-auto">
+            We take the guesswork out of content creation — delivering high-quality, scalable video
+            that captivates your audience and drives real results.
+          </p>
         </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {steps.map((step, i) => (
+            <motion.div
+              key={step.num}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.5, delay: i * 0.07 }}
+              className="bg-[#111] border border-[#1e1e1e] rounded-2xl p-7 hover:border-[#74C044]/30 transition-colors group"
+            >
+              <div className="text-[#74C044] font-black text-xs tracking-[0.3em] uppercase mb-4">
+                {step.num} —
+              </div>
+              <h3 className="text-white font-black text-base uppercase tracking-wide mb-3">
+                {step.title}
+              </h3>
+              <p className="text-[#777] text-sm leading-relaxed">{step.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <p className="text-center text-[#444] text-[10px] mt-10 tracking-widest uppercase">
+          Studio-grade quality is included — it&apos;s just a bonus to make your life easier.
+        </p>
       </div>
     </section>
   );

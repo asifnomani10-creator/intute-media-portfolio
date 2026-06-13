@@ -96,14 +96,14 @@ export default function VideoGrid() {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   return (
-    <section id="showreel" className="relative py-20 px-6">
+    <section id="showreel" className="relative py-24 px-6 bg-[#0d0d0d] border-y border-[#1e1e1e]">
       <div className="max-w-7xl mx-auto">
         {/* Heading */}
-        <div className="mb-10 text-center">
-          <p className="text-xs tracking-[0.3em] uppercase text-slate-500 font-mono mb-3">Portfolio</p>
-          <h2 className="text-4xl md:text-5xl font-black text-white">
-            We Make Content That{" "}
-            <span className="gradient-text">Fits In Your Customer&apos;s Scroll</span>
+        <div className="mb-12 text-center">
+          <p className="text-[11px] tracking-[0.35em] uppercase font-bold text-[#74C044] mb-4">Our Work</p>
+          <h2 className="text-4xl md:text-5xl font-black text-white uppercase">
+            Content That Fits In{" "}
+            <span className="text-[#74C044]">Your Customer&apos;s Scroll</span>
           </h2>
         </div>
 
@@ -122,7 +122,7 @@ export default function VideoGrid() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-black/85 backdrop-blur-sm"
+            className="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-black/90"
             onClick={() => setActiveId(null)}
           >
             <motion.div

@@ -42,7 +42,7 @@ export default function ScrollProgress() {
       {/* Timecode chip — fades in after first scroll */}
       <motion.div
         style={{ opacity: tcOpacity }}
-        className="fixed top-5 right-5 z-[199] pointer-events-none glass-card px-3 py-1.5 flex items-center gap-2"
+        className="fixed top-[110px] right-5 z-[199] pointer-events-none bg-[#111] border border-[#1e1e1e] rounded-xl px-3 py-1.5 flex items-center gap-2"
       >
         <div className="w-1.5 h-1.5 rounded-full bg-[#74C044]" />
         <span className="font-mono text-[11px] text-[#74C044] tabular-nums">

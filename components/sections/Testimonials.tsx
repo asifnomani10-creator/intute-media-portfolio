@@ -7,16 +7,19 @@ export default function Testimonials() {
   const shown = testimonials.slice(0, 4);
 
   return (
-    <section id="testimonials" className="relative py-24 px-6">
+    <section id="testimonials" className="relative py-24 px-6 bg-[#0a0a0a]">
       <div className="max-w-5xl mx-auto">
-        {/* Heading */}
         <div className="text-center mb-14">
-          <p className="text-xs tracking-[0.3em] uppercase text-slate-500 font-mono mb-4">Social Proof</p>
-          <h2 className="text-4xl md:text-5xl font-black text-white">
-            What Clients{" "}
-            <span className="gradient-text">Say</span>
+          <p className="text-[11px] tracking-[0.35em] uppercase font-bold text-[#74C044] mb-4">
+            Social Proof
+          </p>
+          <h2 className="text-4xl md:text-5xl font-black text-white uppercase">
+            Our Client{" "}
+            <span className="text-[#74C044]">Testimonials</span>
           </h2>
-          <div className="w-12 h-0.5 bg-[#74C044] mx-auto mt-5 rounded-full" />
+          <p className="text-[#888] text-center text-xs font-bold uppercase tracking-widest mt-4">
+            Over 50 Satisfied Clients — 4.9-Star Rating
+          </p>
         </div>
 
         {/* 2×2 grid */}
@@ -28,30 +31,35 @@ export default function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="glass-card p-7 flex flex-col gap-5 border border-white/5 hover:border-[#74C044]/20 transition-colors group"
+              className="bg-[#111] border border-[#1e1e1e] rounded-2xl p-7 flex flex-col gap-5 hover:border-[#74C044]/30 transition-colors"
             >
-              {/* Quote mark */}
-              <span className="text-3xl text-[#74C044] font-serif leading-none select-none">&ldquo;&ldquo;</span>
+              {/* Stars */}
+              <div className="flex items-center gap-1">
+                {Array.from({ length: 5 }).map((_, s) => (
+                  <span key={s} className="text-[#74C044] text-sm">★</span>
+                ))}
+                <span className="text-[#555] text-[10px] ml-2 font-mono">5.0</span>
+              </div>
 
               {/* Quote */}
-              <p className="text-slate-300 text-[15px] leading-relaxed flex-1">{t.quote}</p>
+              <p className="text-[#bbb] text-sm leading-relaxed flex-1">&ldquo;{t.quote}&rdquo;</p>
 
               {/* Metric badge */}
               {t.metric && (
-                <div className="inline-flex items-center gap-1.5 self-start px-3 py-1 rounded-full bg-[#74C044]/10 border border-[#74C044]/25">
+                <div className="inline-flex items-center gap-1.5 self-start px-3 py-1.5 rounded-lg bg-[#74C044]/10 border border-[#74C044]/20">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#74C044]" />
-                  <span className="text-[11px] font-semibold text-[#A0D870] tracking-wide">{t.metric}</span>
+                  <span className="text-[10px] font-black text-[#74C044] tracking-widest uppercase">{t.metric}</span>
                 </div>
               )}
 
               {/* Author */}
-              <div className="flex items-center gap-3 pt-4 border-t border-white/8">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#4A8A24] to-[#74C044] flex items-center justify-center text-sm font-black text-white shrink-0">
+              <div className="flex items-center gap-3 pt-4 border-t border-[#1e1e1e]">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#4A8A24] to-[#74C044] flex items-center justify-center text-sm font-black text-white shrink-0">
                   {t.name[0]}
                 </div>
                 <div>
-                  <p className="text-white font-bold text-sm">{t.name}</p>
-                  <p className="text-slate-500 text-xs">{t.role}</p>
+                  <p className="text-white font-black text-sm">{t.name}</p>
+                  <p className="text-[#555] text-xs mt-0.5">{t.role}</p>
                 </div>
               </div>
             </motion.div>

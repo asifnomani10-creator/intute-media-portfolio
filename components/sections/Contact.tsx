@@ -5,9 +5,9 @@ import { motion } from "framer-motion";
 import { Send, CheckCircle2, Camera, PlayCircle, Briefcase, Mail, MessageCircle } from "lucide-react";
 
 const bullets = [
-  "Free content audit, upfront — no strings",
+  "Free content audit, upfront — no strings attached",
   "Custom video strategy roadmap for your niche",
-  "No obligation. Just clarity and a plan.",
+  "No obligation. Just clarity and a clear plan.",
 ];
 
 const socials = [
@@ -30,18 +30,25 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="relative py-24 px-6 overflow-hidden">
-      {/* Subtle top gradient */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 50% at 50% 100%, rgba(116,192,68,0.06) 0%, transparent 65%)",
-        }}
-      />
+    <section id="contact" className="relative py-24 px-6 bg-[#0d0d0d] border-t border-[#1e1e1e]">
+      <div className="max-w-6xl mx-auto">
 
-      <div className="max-w-6xl mx-auto relative">
-        <div className="grid md:grid-cols-2 gap-14 items-center">
+        {/* Heading */}
+        <div className="text-center mb-14">
+          <p className="text-[11px] tracking-[0.35em] uppercase font-bold text-[#74C044] mb-4">
+            Schedule Your Discovery Call Now
+          </p>
+          <h2 className="text-4xl md:text-5xl font-black text-white uppercase leading-tight">
+            Book Your{" "}
+            <span className="text-[#74C044]">Strategy Session!</span>
+          </h2>
+          <p className="text-[#777] text-base mt-5 max-w-lg mx-auto">
+            Secure a slot and embark on the journey to elevate your content with our proven
+            Video Creation Blueprint.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-14 items-start">
 
           {/* ── Left: copy + bullets ── */}
           <motion.div
@@ -52,17 +59,14 @@ export default function Contact() {
             className="flex flex-col gap-8"
           >
             <div>
-              <p className="text-xs tracking-[0.3em] uppercase text-slate-500 font-mono mb-4">
-                Book a Call
-              </p>
-              <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
+              <h3 className="text-2xl font-black text-white uppercase leading-tight mb-4">
                 Ready to Transform
                 <br />
-                <span className="gradient-text">Your Content?</span>
-              </h2>
-              <p className="text-slate-400 text-base mt-5 leading-relaxed max-w-md">
+                <span className="text-[#74C044]">Your Content?</span>
+              </h3>
+              <p className="text-[#888] text-sm leading-relaxed max-w-md">
                 Book a free 30-minute strategy call. We&apos;ll map out exactly how to grow your views,
-                watch time, and revenue — no fluff, just a clear plan.
+                watch time, and revenue — no fluff, just a clear actionable plan.
               </p>
             </div>
 
@@ -70,7 +74,7 @@ export default function Contact() {
               {bullets.map((b) => (
                 <li key={b} className="flex items-start gap-3">
                   <CheckCircle2 className="w-5 h-5 text-[#74C044] mt-0.5 shrink-0" />
-                  <span className="text-slate-300 text-sm">{b}</span>
+                  <span className="text-[#bbb] text-sm">{b}</span>
                 </li>
               ))}
             </ul>
@@ -82,7 +86,7 @@ export default function Contact() {
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="w-10 h-10 glass-card flex items-center justify-center text-slate-400 hover:text-[#74C044] hover:border-[#74C044]/30 transition-all"
+                  className="w-10 h-10 bg-[#111] border border-[#1e1e1e] rounded-lg flex items-center justify-center text-[#555] hover:text-[#74C044] hover:border-[#74C044]/30 transition-all"
                 >
                   <Icon className="w-4 h-4" />
                 </a>
@@ -97,23 +101,23 @@ export default function Contact() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <div className="glass-card p-8 border border-white/8">
+            <div className="bg-[#111] border border-[#1e1e1e] rounded-2xl p-8">
               {status === "sent" ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   className="flex flex-col items-center gap-5 py-12 text-center"
                 >
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#4A8A24] to-[#74C044] flex items-center justify-center text-2xl shadow-lg shadow-[#74C044]/30">
+                  <div className="w-16 h-16 rounded-full bg-[#74C044] flex items-center justify-center text-2xl font-black text-[#0a0a0a] shadow-lg shadow-[#74C044]/30">
                     ✓
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-white">Message Sent!</h3>
-                    <p className="text-slate-400 text-sm mt-2">I&apos;ll reply within 24 hours.</p>
+                    <h3 className="text-xl font-black text-white uppercase">Message Sent!</h3>
+                    <p className="text-[#777] text-sm mt-2">I&apos;ll reply within 24 hours.</p>
                   </div>
                   <button
                     onClick={() => { setStatus("idle"); setForm({ name: "", email: "", type: "", message: "" }); }}
-                    className="text-sm text-[#74C044] hover:text-[#A0D870] transition-colors"
+                    className="text-sm text-[#74C044] hover:text-[#A0D870] transition-colors font-bold uppercase tracking-wider"
                   >
                     Send another →
                   </button>
@@ -126,25 +130,25 @@ export default function Contact() {
                       { key: "email", type: "email", label: "Email", placeholder: "you@email.com" },
                     ].map(({ key, type, label, placeholder }) => (
                       <div key={key} className="flex flex-col gap-1.5">
-                        <label className="text-slate-400 text-xs font-medium tracking-wide uppercase">{label}</label>
+                        <label className="text-[#555] text-[10px] font-black tracking-widest uppercase">{label}</label>
                         <input
                           required
                           type={type}
                           placeholder={placeholder}
                           value={form[key as keyof typeof form]}
                           onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                          className="glass-card px-4 py-3 text-sm text-white placeholder-slate-600 bg-transparent outline-none focus:border-[#74C044]/40 transition-colors rounded-xl"
+                          className="bg-[#0a0a0a] border border-[#1e1e1e] rounded-xl px-4 py-3 text-sm text-white placeholder-[#444] outline-none focus:border-[#74C044]/40 transition-colors"
                         />
                       </div>
                     ))}
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-slate-400 text-xs font-medium tracking-wide uppercase">Project Type</label>
+                    <label className="text-[#555] text-[10px] font-black tracking-widest uppercase">Project Type</label>
                     <select
                       value={form.type}
                       onChange={(e) => setForm({ ...form, type: e.target.value })}
-                      className="glass-card px-4 py-3 text-sm text-white bg-[#040B04] outline-none focus:border-[#74C044]/40 transition-colors rounded-xl"
+                      className="bg-[#0a0a0a] border border-[#1e1e1e] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#74C044]/40 transition-colors"
                     >
                       <option value="">Select type…</option>
                       <option>YouTube Long-form</option>
@@ -158,28 +162,28 @@ export default function Contact() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-slate-400 text-xs font-medium tracking-wide uppercase">Message</label>
+                    <label className="text-[#555] text-[10px] font-black tracking-widest uppercase">Message</label>
                     <textarea
                       required
                       rows={4}
                       placeholder="Tell me about your project…"
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
-                      className="glass-card px-4 py-3 text-sm text-white placeholder-slate-600 bg-transparent outline-none focus:border-[#74C044]/40 transition-colors resize-none rounded-xl"
+                      className="bg-[#0a0a0a] border border-[#1e1e1e] rounded-xl px-4 py-3 text-sm text-white placeholder-[#444] outline-none focus:border-[#74C044]/40 transition-colors resize-none"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={status === "sending"}
-                    className="w-full py-3.5 rounded-full bg-[#74C044] text-[#040B04] font-black text-sm tracking-wide hover:bg-[#A0D870] transition-colors shadow-lg shadow-[#74C044]/25 flex items-center justify-center gap-2 disabled:opacity-60"
+                    className="w-full py-4 rounded-lg bg-[#74C044] text-[#0a0a0a] font-black text-sm tracking-widest uppercase hover:bg-[#A0D870] transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
                   >
                     {status === "sending" ? (
                       <>
                         <motion.div
                           animate={{ rotate: 360 }}
                           transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
-                          className="w-4 h-4 border-2 border-[#040B04]/30 border-t-[#040B04] rounded-full"
+                          className="w-4 h-4 border-2 border-[#0a0a0a]/30 border-t-[#0a0a0a] rounded-full"
                         />
                         Sending…
                       </>
