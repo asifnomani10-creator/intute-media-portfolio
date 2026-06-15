@@ -20,6 +20,7 @@ function VideoCard({
 }) {
   const [hovered, setHovered] = useState(false);
   const [iframeVisible, setIframeVisible] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleMouseEnter = () => {
@@ -33,6 +34,21 @@ function VideoCard({
     setHovered(false);
     setIframeVisible(false);
     onHoverChange(false);
+  };
+
+  const handleIframeLoad = () => {
+    setIframeVisible(true);
+    // YouTube starts muted (required for autoplay) — unmute via postMessage
+    revealTimer.current = setTimeout(() => {
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: "command", func: "unMute", args: [] }),
+        "https://www.youtube.com"
+      );
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: "command", func: "setVolume", args: [80] }),
+        "https://www.youtube.com"
+      );
+    }, 300);
   };
 
   return (
@@ -53,13 +69,14 @@ function VideoCard({
         unoptimized
       />
 
-      {/* Iframe on hover with sound */}
+      {/* Iframe on hover — starts muted for autoplay, then postMessage unmutes */}
       {hovered && (
         <iframe
-          src={`https://www.youtube.com/embed/${reel.youtubeId}?autoplay=1&mute=0&loop=1&playlist=${reel.youtubeId}&controls=0&playsinline=1&rel=0&modestbranding=1&showinfo=0`}
+          ref={iframeRef}
+          src={`https://www.youtube.com/embed/${reel.youtubeId}?autoplay=1&mute=1&loop=1&playlist=${reel.youtubeId}&controls=0&playsinline=1&rel=0&modestbranding=1&showinfo=0&enablejsapi=1`}
           className="absolute inset-0 w-full h-full scale-[1.03] transition-opacity duration-200"
           style={{ opacity: iframeVisible ? 1 : 0 }}
-          onLoad={() => setIframeVisible(true)}
+          onLoad={handleIframeLoad}
           allow="autoplay; encrypted-media"
           title={reel.title}
         />
