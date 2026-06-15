@@ -8,6 +8,8 @@ const screenshots = [
   { src: "/wins/win2.png", alt: "Client analytics screenshot 2" },
   { src: "/wins/win3.png", alt: "Client analytics screenshot 3" },
   { src: "/wins/win4.png", alt: "Client analytics screenshot 4" },
+  { src: "/wins/win5.png", alt: "Client analytics screenshot 5" },
+  { src: "/wins/win6.png", alt: "Client analytics screenshot 6" },
 ];
 
 // Duplicate for seamless loop
@@ -41,7 +43,7 @@ export default function ClientWins() {
       </div>
 
       {/* Scrolling screenshot strip */}
-      <div className="relative w-full overflow-hidden">
+      <div className="relative w-full overflow-hidden group/strip">
         {/* Left fade */}
         <div
           className="absolute left-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
@@ -55,7 +57,13 @@ export default function ClientWins() {
 
         <div
           className="flex gap-5 items-start py-4"
-          style={{ width: "max-content", animation: "scrollLeft 30s linear infinite" }}
+          style={{
+            width: "max-content",
+            animation: "winsScroll 35s linear infinite",
+            animationPlayState: "running",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.animationPlayState = "paused")}
+          onMouseLeave={(e) => (e.currentTarget.style.animationPlayState = "running")}
         >
           {doubled.map((img, i) => (
             <motion.div
