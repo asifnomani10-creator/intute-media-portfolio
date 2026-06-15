@@ -3,12 +3,21 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { X, TrendingUp, Target } from "lucide-react";
+import { X, TrendingUp, Target, Play } from "lucide-react";
 import { reelVideos, type ReelVideo } from "@/lib/data";
 
 const realVideos = reelVideos.filter((r) => r.youtubeId !== null);
+const doubled = [...realVideos, ...realVideos];
 
-function VideoCard({ reel, onPlay }: { reel: ReelVideo; onPlay: (id: string) => void }) {
+function VideoCard({
+  reel,
+  onPlay,
+  onHoverChange,
+}: {
+  reel: ReelVideo;
+  onPlay: (id: string) => void;
+  onHoverChange: (hovered: boolean) => void;
+}) {
   const [hovered, setHovered] = useState(false);
   const [iframeVisible, setIframeVisible] = useState(false);
   const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -16,7 +25,7 @@ function VideoCard({ reel, onPlay }: { reel: ReelVideo; onPlay: (id: string) => 
   const handleMouseEnter = () => {
     setHovered(true);
     setIframeVisible(false);
-    // Give YouTube 600ms to start playing before we reveal the iframe
+    onHoverChange(true);
     revealTimer.current = setTimeout(() => setIframeVisible(true), 600);
   };
 
@@ -24,31 +33,28 @@ function VideoCard({ reel, onPlay }: { reel: ReelVideo; onPlay: (id: string) => 
     if (revealTimer.current) clearTimeout(revealTimer.current);
     setHovered(false);
     setIframeVisible(false);
+    onHoverChange(false);
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.45 }}
+    <div
+      className="relative shrink-0 rounded-2xl overflow-hidden cursor-pointer group border border-[#1e1e1e] hover:border-[#74C044]/60 transition-colors duration-200"
+      style={{ width: "180px", height: "320px" }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={() => reel.youtubeId && onPlay(reel.youtubeId)}
-      className="relative rounded-2xl overflow-hidden cursor-pointer group"
-      style={{ aspectRatio: "9/16" }}
     >
-      {/* Thumbnail — always visible underneath, zero loading time */}
+      {/* Thumbnail — always visible */}
       <Image
         src={`https://img.youtube.com/vi/${reel.youtubeId}/hqdefault.jpg`}
         alt={reel.title}
         fill
         className="object-cover"
-        sizes="(max-width:768px) 50vw, 20vw"
+        sizes="180px"
         unoptimized
       />
 
-      {/* Iframe — created on hover, destroyed on leave (stops sound instantly) */}
+      {/* Iframe on hover with sound */}
       {hovered && (
         <iframe
           src={`https://www.youtube.com/embed/${reel.youtubeId}?autoplay=1&mute=0&loop=1&playlist=${reel.youtubeId}&controls=0&playsinline=1&rel=0&modestbranding=1&showinfo=0`}
@@ -59,52 +65,82 @@ function VideoCard({ reel, onPlay }: { reel: ReelVideo; onPlay: (id: string) => 
         />
       )}
 
-      {/* Transparent overlay — captures click for modal, prevents iframe stealing focus */}
+      {/* Click capture */}
       <div className="absolute inset-0 z-10" />
 
-      {/* Gradient + metrics */}
+      {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent z-20 pointer-events-none" />
-      {(reel.views || reel.engagement) && (
-        <div className="absolute bottom-0 inset-x-0 z-30 px-3 pb-3 flex items-center justify-between pointer-events-none">
-          {reel.views && (
-            <span className="flex items-center gap-1 text-[11px] font-bold text-white">
-              <TrendingUp className="w-3 h-3 text-[#74C044]" />
-              {reel.views}
-            </span>
-          )}
-          {reel.engagement && (
-            <span className="flex items-center gap-1 text-[11px] font-bold text-[#74C044]">
-              <Target className="w-3 h-3" />
-              {reel.engagement}
-            </span>
-          )}
+
+      {/* Play icon shown when not hovered */}
+      {!hovered && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+          <div className="w-10 h-10 rounded-full bg-white/20 border border-white/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <Play className="w-4 h-4 text-white fill-white ml-0.5" />
+          </div>
         </div>
       )}
 
-      {/* Green border glow on hover */}
-      <div className="absolute inset-0 rounded-2xl border-2 border-[#74C044]/0 group-hover:border-[#74C044]/70 transition-colors duration-200 z-30 pointer-events-none" />
-    </motion.div>
+      {/* Metrics */}
+      <div className="absolute bottom-0 inset-x-0 z-30 px-3 pb-3 pointer-events-none">
+        {reel.views && (
+          <div className="flex items-center gap-1 text-[10px] font-bold text-white">
+            <TrendingUp className="w-3 h-3 text-[#74C044]" />
+            {reel.views}
+          </div>
+        )}
+        {reel.engagement && (
+          <div className="flex items-center gap-1 text-[10px] font-bold text-[#74C044]">
+            <Target className="w-3 h-3" />
+            {reel.engagement}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
 export default function VideoGrid() {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
+
+  const handleHoverChange = (hovered: boolean) => {
+    if (stripRef.current) {
+      stripRef.current.style.animationPlayState = hovered ? "paused" : "running";
+    }
+  };
 
   return (
-    <section id="showreel" className="relative py-24 px-6 bg-[#0d0d0d] border-y border-[#1e1e1e]">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-12 text-center">
-          <p className="text-[11px] tracking-[0.35em] uppercase font-bold text-[#74C044] mb-4">Our Work</p>
-          <h2 className="text-4xl md:text-5xl font-black text-white uppercase">
-            Content That Fits In{" "}
-            <span className="text-[#74C044]">Your Customer&apos;s Scroll</span>
-          </h2>
-          <p className="text-[#666] text-sm mt-3">Hover any video to preview with sound</p>
-        </div>
+    <section id="showreel" className="relative py-24 bg-[#0d0d0d] border-y border-[#1e1e1e] overflow-hidden">
+      {/* Heading */}
+      <div className="mb-12 text-center px-6">
+        <p className="text-[11px] tracking-[0.35em] uppercase font-bold text-[#74C044] mb-4">Our Work</p>
+        <h2 className="text-4xl md:text-5xl font-black text-white uppercase">
+          Content That Fits In{" "}
+          <span className="text-[#74C044]">Your Customer&apos;s Scroll</span>
+        </h2>
+        <p className="text-[#666] text-sm mt-3">Hover any video to preview with sound</p>
+      </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
-          {realVideos.map((reel) => (
-            <VideoCard key={reel.youtubeId} reel={reel} onPlay={setActiveId} />
+      {/* Scrolling strip */}
+      <div className="relative w-full overflow-hidden">
+        {/* Fade masks */}
+        <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
+          style={{ background: "linear-gradient(to right, #0d0d0d, transparent)" }} />
+        <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
+          style={{ background: "linear-gradient(to left, #0d0d0d, transparent)" }} />
+
+        <div
+          ref={stripRef}
+          className="flex gap-4 py-2"
+          style={{ width: "max-content", animation: "winsScroll 40s linear infinite" }}
+        >
+          {doubled.map((reel, i) => (
+            <VideoCard
+              key={`${reel.youtubeId}-${i}`}
+              reel={reel}
+              onPlay={setActiveId}
+              onHoverChange={handleHoverChange}
+            />
           ))}
         </div>
       </div>
@@ -123,7 +159,7 @@ export default function VideoGrid() {
               initial={{ scale: 0.85, opacity: 0, y: 24 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.85, opacity: 0, y: 24 }}
-              transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+              transition={{ duration: 0.3 }}
               className="relative overflow-hidden rounded-2xl"
               style={{ width: "min(360px, 90vw)", aspectRatio: "9/16" }}
               onClick={(e) => e.stopPropagation()}
