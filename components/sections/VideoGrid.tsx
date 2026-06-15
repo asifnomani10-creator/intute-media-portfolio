@@ -26,7 +26,6 @@ function VideoCard({
     setHovered(true);
     setIframeVisible(false);
     onHoverChange(true);
-    revealTimer.current = setTimeout(() => setIframeVisible(true), 600);
   };
 
   const handleMouseLeave = () => {
@@ -58,8 +57,9 @@ function VideoCard({
       {hovered && (
         <iframe
           src={`https://www.youtube.com/embed/${reel.youtubeId}?autoplay=1&mute=0&loop=1&playlist=${reel.youtubeId}&controls=0&playsinline=1&rel=0&modestbranding=1&showinfo=0`}
-          className="absolute inset-0 w-full h-full scale-[1.03] transition-opacity duration-300"
+          className="absolute inset-0 w-full h-full scale-[1.03] transition-opacity duration-200"
           style={{ opacity: iframeVisible ? 1 : 0 }}
+          onLoad={() => setIframeVisible(true)}
           allow="autoplay; encrypted-media"
           title={reel.title}
         />
