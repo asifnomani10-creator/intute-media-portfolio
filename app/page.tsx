@@ -5,6 +5,7 @@ import Hero from "@/components/sections/Hero";
 import Brands from "@/components/sections/Brands";
 import VideoGrid from "@/components/sections/VideoGrid";
 import Results from "@/components/sections/Results";
+import ClientWins from "@/components/sections/ClientWins";
 import Services from "@/components/sections/Services";
 import Portfolio from "@/components/sections/Portfolio";
 import About from "@/components/sections/About";
@@ -29,7 +30,10 @@ export default function Home() {
       {/* 4 — Results / Cash flow metrics */}
       <Results />
 
-      {/* 5 — Our process */}
+      {/* 5 — Client wins (real analytics) */}
+      <ClientWins />
+
+      {/* 6 — Our process */}
       <Services />
 
       {/* 6 — Portfolio tabs */}
