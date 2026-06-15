@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { X, TrendingUp, Target, Play } from "lucide-react";
+import { X, Volume2 } from "lucide-react";
 import { reelVideos, type ReelVideo } from "@/lib/data";
 
 const realVideos = reelVideos.filter((r) => r.youtubeId !== null);
@@ -11,55 +11,65 @@ const doubled = [...realVideos, ...realVideos];
 
 function VideoCard({
   reel,
+  index,
   onPlay,
-  onHoverChange,
+  onStripHover,
 }: {
   reel: ReelVideo;
+  index: number;
   onPlay: (id: string) => void;
-  onHoverChange: (hovered: boolean) => void;
+  onStripHover: (active: boolean) => void;
 }) {
-  const [hovered, setHovered] = useState(false);
-  const [iframeVisible, setIframeVisible] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [hovered, setHovered] = useState(false);
+
+  // Stagger iframe creation so they don't all hit the network at once
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), index * 120);
+    return () => clearTimeout(t);
+  }, [index]);
+
+  const unmute = () => {
+    iframeRef.current?.contentWindow?.postMessage(
+      JSON.stringify({ event: "command", func: "unMute", args: [] }),
+      "https://www.youtube.com"
+    );
+    iframeRef.current?.contentWindow?.postMessage(
+      JSON.stringify({ event: "command", func: "setVolume", args: [85] }),
+      "https://www.youtube.com"
+    );
+  };
+
+  const mute = () => {
+    iframeRef.current?.contentWindow?.postMessage(
+      JSON.stringify({ event: "command", func: "mute", args: [] }),
+      "https://www.youtube.com"
+    );
+  };
 
   const handleMouseEnter = () => {
     setHovered(true);
-    setIframeVisible(false);
-    onHoverChange(true);
+    onStripHover(true);
+    unmute();
   };
 
   const handleMouseLeave = () => {
-    if (revealTimer.current) clearTimeout(revealTimer.current);
     setHovered(false);
-    setIframeVisible(false);
-    onHoverChange(false);
-  };
-
-  const handleIframeLoad = () => {
-    setIframeVisible(true);
-    // YouTube starts muted (required for autoplay) — unmute via postMessage
-    revealTimer.current = setTimeout(() => {
-      iframeRef.current?.contentWindow?.postMessage(
-        JSON.stringify({ event: "command", func: "unMute", args: [] }),
-        "https://www.youtube.com"
-      );
-      iframeRef.current?.contentWindow?.postMessage(
-        JSON.stringify({ event: "command", func: "setVolume", args: [80] }),
-        "https://www.youtube.com"
-      );
-    }, 300);
+    onStripHover(false);
+    mute();
   };
 
   return (
     <div
-      className="relative shrink-0 rounded-2xl overflow-hidden cursor-pointer group border border-[#1e1e1e] hover:border-[#74C044]/60 transition-colors duration-200"
+      className="relative shrink-0 rounded-2xl overflow-hidden cursor-pointer border border-[#1e1e1e] hover:border-[#74C044]/70 transition-colors duration-200"
       style={{ width: "180px", height: "320px" }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={() => reel.youtubeId && onPlay(reel.youtubeId)}
     >
-      {/* Thumbnail — always visible */}
+      {/* Thumbnail shown until iframe is ready */}
       <Image
         src={`https://img.youtube.com/vi/${reel.youtubeId}/hqdefault.jpg`}
         alt={reel.title}
@@ -69,47 +79,39 @@ function VideoCard({
         unoptimized
       />
 
-      {/* Iframe on hover — starts muted for autoplay, then postMessage unmutes */}
-      {hovered && (
+      {/* Always-on iframe — muted, loops forever */}
+      {mounted && (
         <iframe
           ref={iframeRef}
           src={`https://www.youtube.com/embed/${reel.youtubeId}?autoplay=1&mute=1&loop=1&playlist=${reel.youtubeId}&controls=0&playsinline=1&rel=0&modestbranding=1&showinfo=0&enablejsapi=1`}
-          className="absolute inset-0 w-full h-full scale-[1.03] transition-opacity duration-200"
-          style={{ opacity: iframeVisible ? 1 : 0 }}
-          onLoad={handleIframeLoad}
+          className="absolute inset-0 w-full h-full scale-[1.03] transition-opacity duration-500"
+          style={{ opacity: loaded ? 1 : 0 }}
+          onLoad={() => setLoaded(true)}
           allow="autoplay; encrypted-media"
           title={reel.title}
         />
       )}
 
-      {/* Click capture */}
+      {/* Transparent click-capture (prevents iframe stealing the click) */}
       <div className="absolute inset-0 z-10" />
 
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent z-20 pointer-events-none" />
+      {/* Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent z-20 pointer-events-none" />
 
-      {/* Play icon shown when not hovered */}
-      {!hovered && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
-          <div className="w-10 h-10 rounded-full bg-white/20 border border-white/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <Play className="w-4 h-4 text-white fill-white ml-0.5" />
-          </div>
+      {/* Sound indicator on hover */}
+      {hovered && loaded && (
+        <div className="absolute top-3 right-3 z-30 w-7 h-7 rounded-full bg-[#74C044] flex items-center justify-center pointer-events-none">
+          <Volume2 className="w-3.5 h-3.5 text-[#0a0a0a]" />
         </div>
       )}
 
       {/* Metrics */}
       <div className="absolute bottom-0 inset-x-0 z-30 px-3 pb-3 pointer-events-none">
         {reel.views && (
-          <div className="flex items-center gap-1 text-[10px] font-bold text-white">
-            <TrendingUp className="w-3 h-3 text-[#74C044]" />
-            {reel.views}
-          </div>
+          <p className="text-[10px] font-bold text-white">{reel.views} views</p>
         )}
         {reel.engagement && (
-          <div className="flex items-center gap-1 text-[10px] font-bold text-[#74C044]">
-            <Target className="w-3 h-3" />
-            {reel.engagement}
-          </div>
+          <p className="text-[10px] font-bold text-[#74C044]">{reel.engagement}</p>
         )}
       </div>
     </div>
@@ -120,9 +122,9 @@ export default function VideoGrid() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const stripRef = useRef<HTMLDivElement>(null);
 
-  const handleHoverChange = (hovered: boolean) => {
+  const handleStripHover = (active: boolean) => {
     if (stripRef.current) {
-      stripRef.current.style.animationPlayState = hovered ? "paused" : "running";
+      stripRef.current.style.animationPlayState = active ? "paused" : "running";
     }
   };
 
@@ -135,28 +137,30 @@ export default function VideoGrid() {
           Content That Fits In{" "}
           <span className="text-[#74C044]">Your Customer&apos;s Scroll</span>
         </h2>
-        <p className="text-[#666] text-sm mt-3">Hover any video to preview with sound</p>
+        <p className="text-[#555] text-sm mt-3 uppercase tracking-widest font-bold">
+          Hover any video to hear the sound
+        </p>
       </div>
 
       {/* Scrolling strip */}
       <div className="relative w-full overflow-hidden">
-        {/* Fade masks */}
-        <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
+        <div className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
           style={{ background: "linear-gradient(to right, #0d0d0d, transparent)" }} />
-        <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
+        <div className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
           style={{ background: "linear-gradient(to left, #0d0d0d, transparent)" }} />
 
         <div
           ref={stripRef}
           className="flex gap-4 py-2"
-          style={{ width: "max-content", animation: "winsScroll 40s linear infinite" }}
+          style={{ width: "max-content", animation: "winsScroll 45s linear infinite" }}
         >
           {doubled.map((reel, i) => (
             <VideoCard
               key={`${reel.youtubeId}-${i}`}
               reel={reel}
+              index={i}
               onPlay={setActiveId}
-              onHoverChange={handleHoverChange}
+              onStripHover={handleStripHover}
             />
           ))}
         </div>
