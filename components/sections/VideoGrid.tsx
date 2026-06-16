@@ -1,64 +1,64 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import { X, Volume2 } from "lucide-react";
 import { reelVideos, type ReelVideo } from "@/lib/data";
+
+// IDs that have a local MP4 in /public/videos/ (no ffmpeg merge needed, format 18)
+const LOCAL_IDS = new Set([
+  "rN4ZRGtRVK8", "MTHD5movMqg", "vSqfOXZAi84", "zQPrUViR61g",
+  "_YRqM9iKRuY", "0Cis6EZHrbU", "QYzTnqrJS0o", "B8PWEd2XXEc",
+  "fQ5JzuPLBnE", "3Gy4ItwXOoA", "KhjP0wi4UdA", "M-wPqT2G6Uw",
+  "a1OmghR2FrA", "dTil7JSHDaA",
+]);
 
 const realVideos = reelVideos.filter((r) => r.youtubeId !== null);
 const doubled = [...realVideos, ...realVideos];
 
 function VideoCard({
   reel,
-  index,
   onPlay,
   onStripHover,
 }: {
   reel: ReelVideo;
-  index: number;
   onPlay: (id: string) => void;
   onStripHover: (active: boolean) => void;
 }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [loaded, setLoaded] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [hovered, setHovered] = useState(false);
-
-  // Stagger iframe creation so they don't all hit the network at once
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), index * 120);
-    return () => clearTimeout(t);
-  }, [index]);
-
-  const unmute = () => {
-    iframeRef.current?.contentWindow?.postMessage(
-      JSON.stringify({ event: "command", func: "unMute", args: [] }),
-      "https://www.youtube.com"
-    );
-    iframeRef.current?.contentWindow?.postMessage(
-      JSON.stringify({ event: "command", func: "setVolume", args: [85] }),
-      "https://www.youtube.com"
-    );
-  };
-
-  const mute = () => {
-    iframeRef.current?.contentWindow?.postMessage(
-      JSON.stringify({ event: "command", func: "mute", args: [] }),
-      "https://www.youtube.com"
-    );
-  };
+  const hasLocal = LOCAL_IDS.has(reel.youtubeId!);
 
   const handleMouseEnter = () => {
     setHovered(true);
     onStripHover(true);
-    unmute();
+    if (hasLocal && videoRef.current) {
+      videoRef.current.muted = false;
+      videoRef.current.volume = 0.85;
+    } else {
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: "command", func: "unMute", args: [] }),
+        "https://www.youtube.com"
+      );
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: "command", func: "setVolume", args: [85] }),
+        "https://www.youtube.com"
+      );
+    }
   };
 
   const handleMouseLeave = () => {
     setHovered(false);
     onStripHover(false);
-    mute();
+    if (hasLocal && videoRef.current) {
+      videoRef.current.muted = true;
+    } else {
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: "command", func: "mute", args: [] }),
+        "https://www.youtube.com"
+      );
+    }
   };
 
   return (
@@ -69,37 +69,35 @@ function VideoCard({
       onMouseLeave={handleMouseLeave}
       onClick={() => reel.youtubeId && onPlay(reel.youtubeId)}
     >
-      {/* Thumbnail shown until iframe is ready */}
-      <Image
-        src={`https://img.youtube.com/vi/${reel.youtubeId}/hqdefault.jpg`}
-        alt={reel.title}
-        fill
-        className="object-cover"
-        sizes="180px"
-        unoptimized
-      />
-
-      {/* Always-on iframe — muted, loops forever */}
-      {mounted && (
+      {hasLocal ? (
+        <video
+          ref={videoRef}
+          src={`/videos/${reel.youtubeId}.mp4`}
+          className="absolute inset-0 w-full h-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+        />
+      ) : (
         <iframe
           ref={iframeRef}
           src={`https://www.youtube.com/embed/${reel.youtubeId}?autoplay=1&mute=1&loop=1&playlist=${reel.youtubeId}&controls=0&playsinline=1&rel=0&modestbranding=1&showinfo=0&enablejsapi=1`}
-          className="absolute inset-0 w-full h-full scale-[1.03] transition-opacity duration-500"
-          style={{ opacity: loaded ? 1 : 0 }}
-          onLoad={() => setLoaded(true)}
+          className="absolute inset-0 w-full h-full scale-[1.03]"
           allow="autoplay; encrypted-media"
           title={reel.title}
         />
       )}
 
-      {/* Transparent click-capture (prevents iframe stealing the click) */}
+      {/* Transparent click-capture overlay (prevents iframe stealing the click) */}
       <div className="absolute inset-0 z-10" />
 
-      {/* Gradient */}
+      {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent z-20 pointer-events-none" />
 
-      {/* Sound indicator on hover */}
-      {hovered && loaded && (
+      {/* Sound indicator */}
+      {hovered && (
         <div className="absolute top-3 right-3 z-30 w-7 h-7 rounded-full bg-[#74C044] flex items-center justify-center pointer-events-none">
           <Volume2 className="w-3.5 h-3.5 text-[#0a0a0a]" />
         </div>
@@ -144,10 +142,14 @@ export default function VideoGrid() {
 
       {/* Scrolling strip */}
       <div className="relative w-full overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
-          style={{ background: "linear-gradient(to right, #0d0d0d, transparent)" }} />
-        <div className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
-          style={{ background: "linear-gradient(to left, #0d0d0d, transparent)" }} />
+        <div
+          className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
+          style={{ background: "linear-gradient(to right, #0d0d0d, transparent)" }}
+        />
+        <div
+          className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
+          style={{ background: "linear-gradient(to left, #0d0d0d, transparent)" }}
+        />
 
         <div
           ref={stripRef}
@@ -158,7 +160,6 @@ export default function VideoGrid() {
             <VideoCard
               key={`${reel.youtubeId}-${i}`}
               reel={reel}
-              index={i}
               onPlay={setActiveId}
               onStripHover={handleStripHover}
             />
@@ -185,14 +186,25 @@ export default function VideoGrid() {
               style={{ width: "min(360px, 90vw)", aspectRatio: "9/16" }}
               onClick={(e) => e.stopPropagation()}
             >
-              <iframe
-                key={activeId}
-                src={`https://www.youtube.com/embed/${activeId}?autoplay=1&start=0&rel=0&modestbranding=1`}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                title="Video"
-              />
+              {LOCAL_IDS.has(activeId) ? (
+                <video
+                  key={activeId}
+                  src={`/videos/${activeId}.mp4`}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  controls
+                  playsInline
+                />
+              ) : (
+                <iframe
+                  key={activeId}
+                  src={`https://www.youtube.com/embed/${activeId}?autoplay=1&start=0&rel=0&modestbranding=1`}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title="Video"
+                />
+              )}
             </motion.div>
             <button
               onClick={() => setActiveId(null)}
