@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Send, CheckCircle2, Camera, PlayCircle, Briefcase, Mail, MessageCircle } from "lucide-react";
+import { Send, CheckCircle2, Camera, PlayCircle, Briefcase, Mail, MessageCircle, CalendarDays } from "lucide-react";
 
 const bullets = [
   "Free content audit, upfront — no strings attached",
@@ -78,6 +78,18 @@ export default function Contact() {
                 </li>
               ))}
             </ul>
+
+            {/* Calendly CTA */}
+            <a
+              href="https://calendly.com/asifnomani/30min"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center justify-center gap-3 w-full py-4 rounded-xl bg-[#74C044] text-[#0a0a0a] font-black text-sm tracking-widest uppercase hover:bg-[#A0D870] transition-colors shadow-lg shadow-[#74C044]/20"
+            >
+              <CalendarDays className="w-5 h-5" />
+              Book a Free 30-Min Call
+            </a>
+            <p className="text-[#444] text-xs text-center -mt-4 uppercase tracking-widest">No commitment · Instant scheduling</p>
 
             {/* Social links */}
             <div className="flex flex-wrap gap-3 pt-2">
@@ -190,10 +202,20 @@ export default function Contact() {
                     ) : (
                       <>
                         <Send className="w-4 h-4" />
-                        Book a Strategy Call
+                        Send Message
                       </>
                     )}
                   </button>
+
+                  <a
+                    href="https://calendly.com/asifnomani/30min"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-3 rounded-lg border border-[#74C044]/40 text-[#74C044] font-black text-sm tracking-widest uppercase hover:bg-[#74C044]/10 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <CalendarDays className="w-4 h-4" />
+                    Or Book a Call Directly
+                  </a>
                 </form>
               )}
             </div>
