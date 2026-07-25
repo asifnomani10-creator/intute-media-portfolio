@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Volume2 } from "lucide-react";
-import { reelVideos, type ReelVideo } from "@/lib/data";
+import { reelVideos } from "@/lib/data";
 
 const LOCAL_IDS = new Set([
   "rN4ZRGtRVK8", "MTHD5movMqg", "vSqfOXZAi84", "zQPrUViR61g",
