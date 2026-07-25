@@ -10,6 +10,9 @@ const screenshots = [
   { src: "/wins/win4.png", alt: "Client analytics screenshot 4" },
   { src: "/wins/win5.png", alt: "Client analytics screenshot 5" },
   { src: "/wins/win6.png", alt: "Client analytics screenshot 6" },
+  { src: "/wins/win7.jpg", alt: "Client results — 59K, 18.8K, 18.6K views" },
+  { src: "/wins/win8.jpg", alt: "Client results — 56K, 3.4K, 3K views" },
+  { src: "/wins/win9.jpg", alt: "Client results — 45.7K, 19.5K, 8.6K views" },
 ];
 
 // Duplicate for seamless loop
